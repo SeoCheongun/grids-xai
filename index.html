@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GridS XAI Analysis</title>
+<style>
+:root{--bg:#fbfaf8;--fg:#172033;--muted:#5b6475;--accent:#791e24;--card:#ffffff;--line:#e4e1dc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121419;--fg:#e8e9ec;--muted:#a1a7b3;--accent:#e07a80;--card:#1b1e25;--line:#2c303a}}
+:root[data-theme="dark"]{--bg:#121419;--fg:#e8e9ec;--muted:#a1a7b3;--accent:#e07a80;--card:#1b1e25;--line:#2c303a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:40px 16px 64px}
+header{text-align:center;margin-bottom:36px}
+h1{font-size:clamp(22px,3.2vw,34px);line-height:1.25;margin:0 0 10px}
+.sub{color:var(--muted);margin:0}
+.tldr{margin:22px auto 0;max-width:760px;padding:14px 18px;border-left:4px solid var(--accent);background:var(--card);text-align:left;font-weight:600}
+section{margin-top:44px;padding-top:28px;border-top:1px solid var(--line)}
+section.intro{margin-top:0;padding-top:0;border-top:0}
+.rq{color:var(--accent);font-weight:700;font-size:14px;letter-spacing:.04em;margin:0}
+h2{font-size:clamp(19px,2.4vw,25px);margin:4px 0 16px}
+video{width:100%;display:block;border-radius:8px;background:#000}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.pair{grid-template-columns:1fr}}
+.cap{font-size:14px;color:var(--muted);margin:6px 0 0}
+.cap b{color:var(--fg)}
+.vid+.vid{margin-top:16px}
+.ans{margin:16px 0 0;font-size:17px}
+.ans b{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>An XAI Analysis of VLA Token Pruning:<br>Does Action-Loss-Driven Visual Token Selection Really Select What Matters?</h1>
+<p class="sub">바이오의공학부 2023250031 서청운</p>
+<p class="tldr">GridS 점은 중요한 곳을 고르지 않는다. 볼 곳은 그 뒤의 attention이 고른다.</p>
+</header>
+
+<section class="intro">
+<div class="vid">
+<video src="assets/attention_vs_grids.mp4" poster="assets/attention_vs_grids_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>위</b> SmolVLA attention: 블록을 따라감 · <b>아래</b> GridS 16점: 거의 제자리 · 같은 Val episode</p>
+</div>
+</section>
+
+<section>
+<p class="rq">RQ1 · Overlap with Important Cells</p>
+<h2>GridS 점은 가리면 예측이 크게 바뀌는 칸(ISS)에 놓이는가?</h2>
+<div class="vid">
+<video src="assets/rq1_iss.mp4" poster="assets/rq1_iss_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>파란 점</b> GridS 16점 · Val episode 1개</p>
+</div>
+<p class="ans"><b>아니다.</b> ISS 상위 16칸에 들어간 비율 0.34~0.36 (무작위 0.33)</p>
+</section>
+
+<section>
+<p class="rq">RQ2 · Coordinate Swap</p>
+<h2>좌표만 영역 안 무작위로 바꾸면 실제 작업이 무너지는가?</h2>
+<div class="pair">
+<div><video src="assets/robot_grids.mp4" poster="assets/robot_grids_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>GridS 학습된 좌표</b> · 성공 11/20</p></div>
+<div><video src="assets/robot_random_coords.mp4" poster="assets/robot_random_coords_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>같은 모델, 영역 안 무작위 좌표</b> · 성공 7/20</p></div>
+</div>
+<p class="ans"><b>거의 달라지지 않는다.</b> 오프라인 오차 +0.06° · 정확한 위치보다 영역이 중요</p>
+</section>
+
+<section>
+<p class="rq">RQ3 · Tracking</p>
+<h2>블록이 움직이면 점도 따라 움직이는가?</h2>
+<p class="ans"><b>따라가지 않는다.</b> 블록 위치와의 상관 (belly / wrist): GridS 점 0.06 / 0.09 · SmolVLA attention 0.71 / 0.53 (맨 위 영상)</p>
+</section>
+
+<section>
+<p class="rq">RQ4 · Why Points Stay Fixed Over Time</p>
+<h2>그렇다면 왜 점은 중요한 곳으로 가지 않는가?</h2>
+<div class="vid">
+<video src="assets/rq4_internal_attn.mp4" poster="assets/rq4_internal_attn_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>점 크기·색</b> GridS 내부 attention · <b>★</b> 가중 평균 위치 · <b>+</b> 블록</p>
+</div>
+<div class="vid">
+<video src="assets/training_points.mp4" poster="assets/training_points_poster.jpg" autoplay muted loop playsinline controls></video>
+<p class="cap"><b>학습 중 GridS 점</b> · 초반에 조금 움직인 뒤 멈춤</p>
+</div>
+<p class="ans"><b>볼 곳은 attention이 고른다.</b> 고정된 점 중 블록 쪽에 attention이 쏠림 (0.29 / 0.63) · 점을 고정한 학습이 더 빨랐고 Val 오차는 같음 (4.79° vs 4.74°)</p>
+</section>
+</main>
+</body>
+</html>
