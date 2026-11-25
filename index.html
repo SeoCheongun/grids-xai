@@ -20,6 +20,7 @@ section.intro{margin-top:0;padding-top:0;border-top:0}
 .rq{color:var(--accent);font-weight:700;font-size:14px;letter-spacing:.04em;margin:0}
 h2{font-size:clamp(19px,2.4vw,25px);margin:4px 0 16px}
 video{width:100%;display:block;border-radius:8px;background:#000}
+.vid img{width:100%;display:block;border-radius:8px;background:#fff}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:760px){.pair{grid-template-columns:1fr}}
 .cap{font-size:14px;color:var(--muted);margin:6px 0 0}
@@ -48,8 +49,8 @@ video{width:100%;display:block;border-radius:8px;background:#000}
 <p class="rq">RQ1 · Overlap with Important Cells</p>
 <h2>GridS 점은 가리면 예측이 크게 바뀌는 칸(ISS)에 놓이는가?</h2>
 <div class="vid">
-<video src="assets/rq1_iss.mp4" poster="assets/rq1_iss_poster.jpg" autoplay muted loop playsinline controls></video>
-<p class="cap"><b>파란 점</b> GridS 16점 · Val episode 1개</p>
+<img src="assets/fig_selector_compare.png" alt="표시한 칸만 남겼을 때 SmolVLA 동작 오차: GridS가 고른 칸은 같은 수 무작위 칸과 비슷하다">
+<p class="cap">표시한 칸만 남기고 나머지를 가렸을 때 SmolVLA 동작 오차 · <b>GridS가 고른 칸 ≈ 같은 수 무작위 칸</b></p>
 </div>
 <p class="ans"><b>아니다.</b> ISS 상위 16칸에 들어간 비율 0.34~0.36 (무작위 0.33)</p>
 </section>
